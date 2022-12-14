@@ -6,6 +6,9 @@ import { fetchCurrencies } from '../redux/actions';
 function WalletForm(props) {
   const [expenseValue, setExpenseValue] = useState('');
   const [description, setDescription] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [method, setMethod] = useState('Dinheiro');
+  const [tag, setTag] = useState('Alimentação');
 
   const { dispatch, currencies } = props;
 
@@ -13,7 +16,9 @@ function WalletForm(props) {
     dispatch(fetchCurrencies());
   }, [dispatch]);
 
-  console.log('currencies', currencies);
+  const currencyOptions = currencies.map((currency) => (
+    <option key={ currency } value={ currency }>{ currency }</option>
+  ));
 
   return (
     <form>
@@ -38,6 +43,48 @@ function WalletForm(props) {
           onChange={ ({ target: { value } }) => { setDescription(value); } }
           value={ description }
         />
+      </label>
+      <label htmlFor="currency-input">
+        Moeda:
+        {' '}
+      </label>
+      <select
+        data-testid="currency-input"
+        id="currency-input"
+        onChange={ ({ target: { value } }) => { setSelectedCurrency(value); } }
+        value={ selectedCurrency }
+      >
+        { currencyOptions }
+      </select>
+      <label htmlFor="method-input">
+        Método de pagamento:
+        {' '}
+        <select
+          data-testid="method-input"
+          id="method-input"
+          onChange={ ({ target: { value } }) => { setMethod(value); } }
+          value={ method }
+        >
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Cartão de crédito">Cartão de crédito</option>
+          <option value="Cartão de débito">Cartão de débito</option>
+        </select>
+      </label>
+      <label htmlFor="tag-input">
+        Tag:
+        {' '}
+        <select
+          data-testid="tag-input"
+          id="tag-input"
+          onChange={ ({ target: { value } }) => { setTag(value); } }
+          value={ tag }
+        >
+          <option value="Alimentação">Alimentação</option>
+          <option value="Lazer">Lazer</option>
+          <option value="Trabalho">Trabalho</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Saúde">Saúde</option>
+        </select>
       </label>
     </form>
   );
