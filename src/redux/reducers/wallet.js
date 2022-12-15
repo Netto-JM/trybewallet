@@ -13,8 +13,9 @@ const INITIAL_STATE = {
   isSavingExpenses: false,
   errorMessageExpenses: '',
   currencies: [],
+  total: 0,
   expenses: [], // array de objetos, com cada objeto tendo as chaves id, value, currency, method, tag, description e exchangeRates
-  editor: false, // valor booleano que indica de uma despesa está sendo editada
+  editor: false, // valor booleano que indica se uma despesa está sendo editada
   idToEdit: 0, // valor numérico que armazena o id da despesa que esta sendo editada
 };
 
@@ -53,6 +54,7 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
       isSavingExpenses: false,
       errorMessageExpenses: '',
       expenses: [...state.expenses, payload],
+      total: state.total + (payload.value * payload.exchangeRates[payload.currency].ask),
     };
   case SAVE_EXPENSE_FAILED:
     return {
