@@ -2,11 +2,16 @@ import {
   FETCH_CURRENCIES_STARTED,
   FETCH_CURRENCIES_SUCCESSFUL,
   FETCH_CURRENCIES_FAILED,
+  SAVE_EXPENSE_STARTED,
+  SAVE_EXPENSE_SUCCESSFUL,
+  SAVE_EXPENSE_FAILED,
 } from '../actions';
 
 const INITIAL_STATE = {
   isFetchingCurrencies: false,
   errorMessageCurrencies: '',
+  isSavingExpenses: false,
+  errorMessageExpenses: '',
   currencies: [],
   expenses: [], // array de objetos, com cada objeto tendo as chaves id, value, currency, method, tag, description e exchangeRates
   editor: false, // valor booleano que indica de uma despesa está sendo editada
@@ -35,6 +40,25 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
       isFetchingCurrencies: false,
       errorMessageCurrencies: payload,
       currencies: [],
+    };
+  case SAVE_EXPENSE_STARTED:
+    return {
+      ...state,
+      isSavingExpenses: true,
+      errorMessageExpenses: '',
+    };
+  case SAVE_EXPENSE_SUCCESSFUL:
+    return {
+      ...state,
+      isSavingExpenses: false,
+      errorMessageExpenses: '',
+      expenses: [...state.expenses, payload],
+    };
+  case SAVE_EXPENSE_FAILED:
+    return {
+      ...state,
+      isSavingExpenses: false,
+      errorMessageExpenses: payload,
     };
   default:
     return state;

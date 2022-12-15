@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { fetchCurrencies } from '../redux/actions';
+import { fetchCurrencies, saveExpense } from '../redux/actions';
 
 function WalletForm(props) {
   const [expenseValue, setExpenseValue] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('USD');
   const [method, setMethod] = useState('Dinheiro');
   const [tag, setTag] = useState('Alimentação');
+  const [id, setId] = useState(0);
 
   const { dispatch, currencies } = props;
 
@@ -16,9 +17,26 @@ function WalletForm(props) {
     dispatch(fetchCurrencies());
   }, [dispatch]);
 
-  const currencyOptions = currencies.map((currency) => (
-    <option key={ currency } value={ currency }>{ currency }</option>
+  const currencyOptions = currencies.map((currencyOption) => (
+    <option key={ currencyOption } value={ currencyOption }>{ currencyOption }</option>
   ));
+
+  const addExpense = () => {
+    const newExpense = {
+      id,
+      value: expenseValue,
+      description,
+      currency,
+      method,
+      tag,
+    };
+
+    dispatch(saveExpense(newExpense));
+
+    setExpenseValue('');
+    setDescription('');
+    setId(id + 1);
+  };
 
   return (
     <form>
@@ -51,8 +69,8 @@ function WalletForm(props) {
       <select
         data-testid="currency-input"
         id="currency-input"
-        onChange={ ({ target: { value } }) => { setSelectedCurrency(value); } }
-        value={ selectedCurrency }
+        onChange={ ({ target: { value } }) => { setCurrency(value); } }
+        value={ currency }
       >
         { currencyOptions }
       </select>
@@ -86,6 +104,13 @@ function WalletForm(props) {
           <option value="Saúde">Saúde</option>
         </select>
       </label>
+      <button
+        type="button"
+        data-testid="button-submit"
+        onClick={ addExpense }
+      >
+        Adicionar despesa
+      </button>
     </form>
   );
 }
