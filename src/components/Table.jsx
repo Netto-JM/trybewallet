@@ -1,26 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { deleteExpense } from '../redux/actions';
 
 function Table(props) {
-  const { expenses } = props;
+  const { expenses, dispatch } = props;
 
-  const expensesTable = expenses
-    .map(({ id, value, description, currency, method, tag, exchangeRates }) => (
+  const expensesTable = expenses.map(
+    ({ id, value, description, currency, method, tag, exchangeRates }) => (
       <tr key={ id }>
-        <td>{ description }</td>
-        <td>{ tag }</td>
-        <td>{ method }</td>
-        <td>{ (+value).toFixed(2) }</td>
-        <td>{ exchangeRates[currency].name }</td>
-        <td>{ (+exchangeRates[currency].ask).toFixed(2) }</td>
-        <td>{ (value * exchangeRates[currency].ask).toFixed(2) }</td>
+        <td>{description}</td>
+        <td>{tag}</td>
+        <td>{method}</td>
+        <td>{(+value).toFixed(2)}</td>
+        <td>{exchangeRates[currency].name}</td>
+        <td>{(+exchangeRates[currency].ask).toFixed(2)}</td>
+        <td>{(value * exchangeRates[currency].ask).toFixed(2)}</td>
         <td>Real</td>
+        <td>
+          <button
+            type="button"
+            data-testid="delete-btn"
+            onClick={ () => { dispatch(deleteExpense(id)); } }
+          >
+            Excluir
+          </button>
+        </td>
       </tr>
-    ));
+    ),
+  );
 
   return (
-    <table className="table">
+    <table>
       <thead>
         <tr>
           <th>Descrição</th>
@@ -51,6 +62,7 @@ Table.propTypes = {
       exchangeRates: PropTypes.shape(PropTypes.shape).isRequired,
     }),
   ).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
