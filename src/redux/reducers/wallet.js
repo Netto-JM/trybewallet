@@ -2,9 +2,8 @@ import {
   FETCH_CURRENCIES_STARTED,
   FETCH_CURRENCIES_SUCCESSFUL,
   FETCH_CURRENCIES_FAILED,
-  SAVE_EXPENSE_STARTED,
-  SAVE_EXPENSE_SUCCESSFUL,
-  SAVE_EXPENSE_FAILED,
+  SAVE_EXPENSE,
+  DELETE_EXPENSE,
 } from '../actions';
 
 const INITIAL_STATE = {
@@ -19,6 +18,13 @@ const INITIAL_STATE = {
   idToEdit: 0, // valor numérico que armazena o id da despesa que esta sendo editada
 };
 
+const findExpenseValue = ({ expenses }, id) => {
+  const deletedExpense = expenses.find((expense) => expense.id === +id);
+  const { value, exchangeRates, currency } = deletedExpense;
+  const deletedValue = value * exchangeRates[currency].ask;
+  return deletedValue;
+};
+
 const wallet = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case FETCH_CURRENCIES_STARTED:
@@ -26,7 +32,6 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
       ...state,
       isFetchingCurrencies: true,
       errorMessageCurrencies: '',
-      currencies: [],
     };
   case FETCH_CURRENCIES_SUCCESSFUL:
     return {
@@ -40,15 +45,8 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
       ...state,
       isFetchingCurrencies: false,
       errorMessageCurrencies: payload,
-      currencies: [],
     };
-  case SAVE_EXPENSE_STARTED:
-    return {
-      ...state,
-      isSavingExpenses: true,
-      errorMessageExpenses: '',
-    };
-  case SAVE_EXPENSE_SUCCESSFUL:
+  case SAVE_EXPENSE:
     return {
       ...state,
       isSavingExpenses: false,
@@ -56,11 +54,11 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
       expenses: [...state.expenses, payload],
       total: state.total + (payload.value * payload.exchangeRates[payload.currency].ask),
     };
-  case SAVE_EXPENSE_FAILED:
+  case DELETE_EXPENSE:
     return {
       ...state,
-      isSavingExpenses: false,
-      errorMessageExpenses: payload,
+      expenses: [...state.expenses.filter((expense) => expense.id !== payload)],
+      total: state.total - (findExpenseValue(state, payload)),
     };
   default:
     return state;
