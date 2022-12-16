@@ -8,12 +8,10 @@ import {
 
 const INITIAL_STATE = {
   isFetchingCurrencies: false,
-  errorMessageCurrencies: '',
-  isSavingExpenses: false,
-  errorMessageExpenses: '',
+  errorMessage: '',
   currencies: [],
   total: 0,
-  expenses: [], // array de objetos, com cada objeto tendo as chaves id, value, currency, method, tag, description e exchangeRates
+  expenses: [],
   editor: false, // valor booleano que indica se uma despesa está sendo editada
   idToEdit: 0, // valor numérico que armazena o id da despesa que esta sendo editada
 };
@@ -31,26 +29,26 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
     return {
       ...state,
       isFetchingCurrencies: true,
-      errorMessageCurrencies: '',
+      errorMessage: '',
     };
   case FETCH_CURRENCIES_SUCCESSFUL:
     return {
       ...state,
       isFetchingCurrencies: false,
-      errorMessageCurrencies: '',
+      errorMessage: '',
       currencies: payload,
     };
   case FETCH_CURRENCIES_FAILED:
     return {
       ...state,
       isFetchingCurrencies: false,
-      errorMessageCurrencies: payload,
+      errorMessage: payload,
     };
   case SAVE_EXPENSE:
     return {
       ...state,
-      isSavingExpenses: false,
-      errorMessageExpenses: '',
+      isFetchingCurrencies: false,
+      errorMessage: '',
       expenses: [...state.expenses, payload],
       total: state.total + (payload.value * payload.exchangeRates[payload.currency].ask),
     };
