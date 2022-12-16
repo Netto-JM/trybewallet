@@ -17,7 +17,7 @@ const INITIAL_STATE = {
 };
 
 const findExpenseValue = ({ expenses }, id) => {
-  const deletedExpense = expenses.find((expense) => expense.id === +id);
+  const deletedExpense = expenses.find((expense) => expense.id === id);
   const { value, exchangeRates, currency } = deletedExpense;
   const deletedValue = value * exchangeRates[currency].ask;
   return deletedValue;
