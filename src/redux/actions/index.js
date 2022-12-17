@@ -4,6 +4,8 @@ export const FETCH_CURRENCIES_SUCCESSFUL = 'FETCH_CURRENCIES_SUCCESSFUL';
 export const FETCH_CURRENCIES_FAILED = 'FETCH_CURRENCIES_FAILED';
 export const SAVE_EXPENSE = 'SAVE_EXPENSE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+export const EDIT_EXPENSE = 'EDIT_EXPENSE';
+export const SAVE_EDITED_EXPENSE = 'EDIT_EXPENSE';
 
 export const saveUser = (userEmail) => ({
   type: SAVE_USER,
@@ -61,4 +63,14 @@ export const saveExpense = (newExpense) => async (dispatch) => {
 export const deleteExpense = (id) => ({
   type: DELETE_EXPENSE,
   payload: id,
+});
+
+export const editExpense = (idToEdit) => ({
+  type: EDIT_EXPENSE,
+  payload: idToEdit,
+});
+
+export const saveEditedExpense = (newExpense) => ({
+  type: EDIT_EXPENSE,
+  payload: newExpense,
 });
