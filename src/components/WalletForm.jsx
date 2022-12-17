@@ -117,7 +117,7 @@ function WalletForm(props) {
 
 const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
-  isFetching: state.wallet.isFetchingCurrencies,
+  isFetching: state.wallet.isFetching,
   errorMessage: state.wallet.errorMessage,
 });
 
