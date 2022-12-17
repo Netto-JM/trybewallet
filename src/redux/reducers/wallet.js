@@ -4,10 +4,12 @@ import {
   FETCH_CURRENCIES_FAILED,
   SAVE_EXPENSE,
   DELETE_EXPENSE,
+  EDIT_EXPENSE,
+  SAVE_EDITED_EXPENSE,
 } from '../actions';
 
 const INITIAL_STATE = {
-  isFetchingCurrencies: false,
+  isFetching: false,
   errorMessage: '',
   currencies: [],
   total: 0,
@@ -16,47 +18,53 @@ const INITIAL_STATE = {
   idToEdit: 0, // valor numérico que armazena o id da despesa que esta sendo editada
 };
 
-const findExpenseValue = ({ expenses }, id) => {
-  const deletedExpense = expenses.find((expense) => expense.id === id);
-  const { value, exchangeRates, currency } = deletedExpense;
-  const deletedValue = value * exchangeRates[currency].ask;
-  return deletedValue;
-};
+const filterExpenses = ({ expenses }, id) => (
+  [...expenses.filter((expense) => expense.id !== id)]
+);
+
+const findExpense = ({ expenses }, id) => expenses.find((expense) => expense.id === id);
+
+const findValue = ({ value, exchangeRates, currency }) => (
+  value * exchangeRates[currency].ask
+);
+
+const findTotalAfterEdit = (state, newExpense) => (
+  state.total - (findValue(findExpense(state, state.idToEdit)) - findValue(newExpense))
+);
 
 const wallet = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case FETCH_CURRENCIES_STARTED:
-    return {
-      ...state,
-      isFetchingCurrencies: true,
-      errorMessage: '',
-    };
+    return { ...state, isFetching: true, errorMessage: '' };
   case FETCH_CURRENCIES_SUCCESSFUL:
-    return {
-      ...state,
-      isFetchingCurrencies: false,
-      errorMessage: '',
-      currencies: payload,
-    };
+    return { ...state, isFetching: false, errorMessage: '', currencies: payload };
   case FETCH_CURRENCIES_FAILED:
-    return {
-      ...state,
-      isFetchingCurrencies: false,
-      errorMessage: payload,
-    };
+    return { ...state, isFetching: false, errorMessage: payload };
   case SAVE_EXPENSE:
     return {
       ...state,
-      isFetchingCurrencies: false,
-      errorMessage: '',
+      isFetching: false,
       expenses: [...state.expenses, payload],
       total: state.total + (payload.value * payload.exchangeRates[payload.currency].ask),
     };
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: [...state.expenses.filter((expense) => expense.id !== payload)],
-      total: state.total - (findExpenseValue(state, payload)),
+      expenses: filterExpenses(state, payload),
+      total: state.total - (findValue(findExpense(state, payload))),
+    };
+  case EDIT_EXPENSE:
+    return {
+      ...state,
+      editor: true,
+      idToEdit: payload,
+    };
+  case SAVE_EDITED_EXPENSE:
+    return {
+      ...state,
+      expenses: [...filterExpenses(state, state.idToEdit), payload],
+      total: findTotalAfterEdit(state, payload),
+      editor: false,
     };
   default:
     return state;
