@@ -1,7 +1,7 @@
 import {
-  FETCH_CURRENCIES_STARTED,
-  FETCH_CURRENCIES_SUCCESSFUL,
-  FETCH_CURRENCIES_FAILED,
+  FETCH_EXCHANGE_RATES_STARTED,
+  FETCH_EXCHANGE_RATES_SUCCESSFUL,
+  FETCH_EXCHANGE_RATES_FAILED,
   SAVE_EXPENSE,
   DELETE_EXPENSE,
   EDIT_EXPENSE,
@@ -22,6 +22,10 @@ const filterExpenses = ({ expenses }, id) => (
   [...expenses.filter((expense) => expense.id !== id)]
 );
 
+const reorganizeExpenses = (expenses) => (
+  expenses.map((expense, index) => ({ ...expense, id: index }))
+);
+
 const findExpense = ({ expenses }, id) => expenses.find((expense) => expense.id === id);
 
 const findValue = ({ value, exchangeRates, currency }) => (
@@ -34,11 +38,11 @@ const findTotalAfterEdit = (state, newExpense) => (
 
 const wallet = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
-  case FETCH_CURRENCIES_STARTED:
+  case FETCH_EXCHANGE_RATES_STARTED:
     return { ...state, isFetching: true, errorMessage: '' };
-  case FETCH_CURRENCIES_SUCCESSFUL:
+  case FETCH_EXCHANGE_RATES_SUCCESSFUL:
     return { ...state, isFetching: false, errorMessage: '', currencies: payload };
-  case FETCH_CURRENCIES_FAILED:
+  case FETCH_EXCHANGE_RATES_FAILED:
     return { ...state, isFetching: false, errorMessage: payload };
   case SAVE_EXPENSE:
     return {
@@ -50,7 +54,7 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: filterExpenses(state, payload),
+      expenses: reorganizeExpenses(filterExpenses(state, payload)),
       total: state.total - (findValue(findExpense(state, payload))),
     };
   case EDIT_EXPENSE:
