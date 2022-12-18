@@ -9,13 +9,27 @@ function WalletForm(props) {
   const [currency, setCurrency] = useState('USD');
   const [method, setMethod] = useState('Dinheiro');
   const [tag, setTag] = useState('Alimentação');
-  const [id, setId] = useState(0);
+  const [editingId, setEditingId] = useState(0);
+  const [exchangeRates, setExchangeRates] = useState([]);
 
-  const { dispatch, currencies } = props;
+  const { dispatch, currencies, editor, expenses, idToEdit } = props;
 
   useEffect(() => {
     dispatch(fetchCurrencies());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (editor) {
+      const expenseToEdit = expenses.find((expense) => expense.id === idToEdit);
+      setExpenseValue(expenseToEdit.value);
+      setDescription(expenseToEdit.description);
+      setCurrency(expenseToEdit.currency);
+      setMethod(expenseToEdit.method);
+      setTag(expenseToEdit.tag);
+      setEditingId(expenseToEdit.id);
+      setExchangeRates(expenseToEdit.exchangeRates);
+    }
+  }, [editor, expenses, idToEdit]);
 
   const currencyOptions = currencies.map((currencyOption) => (
     <option key={ currencyOption } value={ currencyOption }>{ currencyOption }</option>
@@ -23,19 +37,20 @@ function WalletForm(props) {
 
   const addExpense = () => {
     const newExpense = {
-      id,
+      id: editor ? editingId : expenses.length,
       value: expenseValue,
       description,
       currency,
       method,
       tag,
+      exchangeRates,
     };
 
-    dispatch(saveExpense(newExpense));
+    dispatch(saveExpense(newExpense, editor));
 
     setExpenseValue('');
     setDescription('');
-    setId(id + 1);
+    setExchangeRates([]);
   };
 
   return (
@@ -109,7 +124,7 @@ function WalletForm(props) {
         data-testid="button-submit"
         onClick={ addExpense }
       >
-        Adicionar despesa
+        {editor ? 'Editar Despesa' : 'Adicionar Despesa'}
       </button>
     </form>
   );
@@ -117,13 +132,19 @@ function WalletForm(props) {
 
 const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
+  expenses: state.wallet.expenses,
+  editor: state.wallet.editor,
+  idToEdit: state.wallet.idToEdit,
   isFetching: state.wallet.isFetching,
   errorMessage: state.wallet.errorMessage,
 });
 
 WalletForm.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  editor: PropTypes.bool.isRequired,
+  idToEdit: PropTypes.number.isRequired,
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
+  expenses: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
 export default connect(mapStateToProps)(WalletForm);
