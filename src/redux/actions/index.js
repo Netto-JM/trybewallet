@@ -1,33 +1,33 @@
 export const SAVE_USER = 'SAVE_USER';
-export const FETCH_CURRENCIES_STARTED = 'FETCH_CURRENCIES_STARTED';
-export const FETCH_CURRENCIES_SUCCESSFUL = 'FETCH_CURRENCIES_SUCCESSFUL';
-export const FETCH_CURRENCIES_FAILED = 'FETCH_CURRENCIES_FAILED';
+export const FETCH_EXCHANGE_RATES_STARTED = 'FETCH_EXCHANGE_RATES_STARTED';
+export const FETCH_EXCHANGE_RATES_SUCCESSFUL = 'FETCH_EXCHANGE_RATES_SUCCESSFUL';
+export const FETCH_EXCHANGE_RATES_FAILED = 'FETCH_EXCHANGE_RATES_FAILED';
 export const SAVE_EXPENSE = 'SAVE_EXPENSE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const EDIT_EXPENSE = 'EDIT_EXPENSE';
-export const SAVE_EDITED_EXPENSE = 'EDIT_EXPENSE';
+export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
 
 export const saveUser = (userEmail) => ({
   type: SAVE_USER,
   payload: userEmail,
 });
 
-const fetchCurrenciesStarted = () => ({
-  type: FETCH_CURRENCIES_STARTED,
+const fetchExchangeRatesStarted = () => ({
+  type: FETCH_EXCHANGE_RATES_STARTED,
 });
 
-const fetchCurrenciesSuccessful = (currencies) => ({
-  type: FETCH_CURRENCIES_SUCCESSFUL,
+const fetchExchangeRatesSuccessful = (currencies) => ({
+  type: FETCH_EXCHANGE_RATES_SUCCESSFUL,
   payload: currencies,
 });
 
-const fetchCurrenciesFailed = (error) => ({
-  type: FETCH_CURRENCIES_FAILED,
+const fetchExchangeRatesFailed = (error) => ({
+  type: FETCH_EXCHANGE_RATES_FAILED,
   payload: error,
 });
 
-const saveExpenseAndRates = (expenseAndRates) => ({
-  type: SAVE_EXPENSE,
+const saveExpenseAndRates = (expenseAndRates, editor) => ({
+  type: editor ? SAVE_EDITED_EXPENSE : SAVE_EXPENSE,
   payload: expenseAndRates,
 });
 
@@ -39,24 +39,28 @@ const fetchExchangeRates = async () => {
 };
 
 export const fetchCurrencies = () => async (dispatch) => {
-  dispatch(fetchCurrenciesStarted());
+  dispatch(fetchExchangeRatesStarted());
   try {
     const excRates = await fetchExchangeRates();
     const currencies = Object.keys(excRates).filter((currency) => currency !== 'USDT');
-    dispatch(fetchCurrenciesSuccessful(currencies));
+    dispatch(fetchExchangeRatesSuccessful(currencies));
   } catch (error) {
-    dispatch(fetchCurrenciesFailed(error));
+    dispatch(fetchExchangeRatesFailed(error));
   }
 };
 
-export const saveExpense = (newExpense) => async (dispatch) => {
-  dispatch(fetchCurrenciesStarted());
+export const saveExpense = (newExpense, editor) => async (dispatch) => {
+  if (editor) {
+    dispatch(saveExpenseAndRates(newExpense, editor));
+    return;
+  }
+  dispatch(fetchExchangeRatesStarted());
   try {
     const exchangeRates = await fetchExchangeRates();
     const expenseAndRates = { ...newExpense, exchangeRates: { ...exchangeRates } };
-    dispatch(saveExpenseAndRates(expenseAndRates));
+    dispatch(saveExpenseAndRates(expenseAndRates, editor));
   } catch (error) {
-    dispatch(fetchCurrenciesFailed(error));
+    dispatch(fetchExchangeRatesFailed(error));
   }
 };
 
@@ -68,9 +72,4 @@ export const deleteExpense = (id) => ({
 export const editExpense = (idToEdit) => ({
   type: EDIT_EXPENSE,
   payload: idToEdit,
-});
-
-export const saveEditedExpense = (newExpense) => ({
-  type: EDIT_EXPENSE,
-  payload: newExpense,
 });
