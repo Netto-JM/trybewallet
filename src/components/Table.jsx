@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { deleteExpense } from '../redux/actions';
+import { deleteExpense, editExpense } from '../redux/actions';
 
 function Table(props) {
   const { expenses, dispatch } = props;
 
-  const expensesTable = expenses.map(
+  const sortedExpenses = expenses.sort((a, b) => a.id - b.id);
+
+  const expensesTable = sortedExpenses.map(
     ({ id, value, description, currency, method, tag, exchangeRates }) => (
       <tr key={ id }>
         <td>{description}</td>
@@ -24,6 +26,13 @@ function Table(props) {
             onClick={ () => { dispatch(deleteExpense(id)); } }
           >
             Excluir
+          </button>
+          <button
+            type="button"
+            data-testid="edit-btn"
+            onClick={ () => { dispatch(editExpense(id)); } }
+          >
+            Editar
           </button>
         </td>
       </tr>
