@@ -9,7 +9,6 @@ function WalletForm(props) {
   const [currency, setCurrency] = useState('USD');
   const [method, setMethod] = useState('Dinheiro');
   const [tag, setTag] = useState('Alimentação');
-  const [editingId, setEditingId] = useState(0);
   const [exchangeRates, setExchangeRates] = useState([]);
 
   const { dispatch, currencies, editor, expenses, idToEdit } = props;
@@ -26,7 +25,6 @@ function WalletForm(props) {
       setCurrency(expenseToEdit.currency);
       setMethod(expenseToEdit.method);
       setTag(expenseToEdit.tag);
-      setEditingId(expenseToEdit.id);
       setExchangeRates(expenseToEdit.exchangeRates);
     }
   }, [editor, expenses, idToEdit]);
@@ -37,7 +35,6 @@ function WalletForm(props) {
 
   const addExpense = () => {
     const newExpense = {
-      id: editor ? editingId : expenses.length,
       value: expenseValue,
       description,
       currency,
