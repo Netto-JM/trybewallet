@@ -141,7 +141,17 @@ WalletForm.propTypes = {
   editor: PropTypes.bool.isRequired,
   idToEdit: PropTypes.number.isRequired,
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  expenses: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  expenses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      value: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      currency: PropTypes.string.isRequired,
+      method: PropTypes.string.isRequired,
+      tag: PropTypes.string.isRequired,
+      exchangeRates: PropTypes.shape(PropTypes.shape).isRequired,
+    }),
+  ).isRequired,
 };
 
 export default connect(mapStateToProps)(WalletForm);
