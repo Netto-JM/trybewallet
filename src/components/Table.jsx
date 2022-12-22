@@ -6,9 +6,7 @@ import { deleteExpense, editExpense } from '../redux/actions';
 function Table(props) {
   const { expenses, dispatch } = props;
 
-  const sortedExpenses = expenses.sort((a, b) => a.id - b.id);
-
-  const expensesTable = sortedExpenses.map(
+  const expensesTable = expenses.map(
     ({ id, value, description, currency, method, tag, exchangeRates }) => (
       <tr key={ id }>
         <td>{description}</td>
