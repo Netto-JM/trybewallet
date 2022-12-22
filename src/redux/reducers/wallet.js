@@ -16,24 +16,27 @@ const INITIAL_STATE = {
   expenses: [],
   editor: false, // valor booleano que indica se uma despesa está sendo editada
   idToEdit: 0, // valor numérico que armazena o id da despesa que esta sendo editada
+  idToAdd: 0, // valor numérico que armazena o id da próxima despesa que será adicionada
 };
 
-const filterExpenses = ({ expenses }, id) => (
+const filterExpenses = (expenses, id) => (
   [...expenses.filter((expense) => expense.id !== id)]
 );
 
-const reorganizeExpenses = (expenses) => (
-  expenses.map((expense, index) => ({ ...expense, id: index }))
-);
+const reorganizeExpenses = ({ expenses, idToEdit }, editedExpense) => {
+  const editedExpenses = [...filterExpenses(expenses, idToEdit), editedExpense];
+  const sortedExpenses = editedExpenses.sort((a, b) => a.id - b.id);
+  return sortedExpenses;
+};
 
-const findExpense = ({ expenses }, id) => expenses.find((expense) => expense.id === id);
+const findExpense = (expenses, id) => expenses.find((expense) => expense.id === id);
 
 const findValue = ({ value, exchangeRates, currency }) => (
   value * exchangeRates[currency].ask
 );
 
-const findTotalAfterEdit = (state, newExpense) => (
-  state.total - (findValue(findExpense(state, state.idToEdit)) - findValue(newExpense))
+const findTotalAfterEdit = ({ total, expenses, idToEdit }, newExpense) => (
+  total - (findValue(findExpense(expenses, idToEdit)) - findValue(newExpense))
 );
 
 const wallet = (state = INITIAL_STATE, { type, payload }) => {
@@ -48,14 +51,15 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
     return {
       ...state,
       isFetching: false,
-      expenses: [...state.expenses, payload],
+      expenses: [...state.expenses, { ...payload, id: state.idToAdd }],
       total: state.total + (payload.value * payload.exchangeRates[payload.currency].ask),
+      idToAdd: state.idToAdd + 1,
     };
   case DELETE_EXPENSE:
     return {
       ...state,
-      expenses: reorganizeExpenses(filterExpenses(state, payload)),
-      total: state.total - (findValue(findExpense(state, payload))),
+      expenses: filterExpenses(state.expenses, payload),
+      total: state.total - (findValue(findExpense(state.expenses, payload))),
     };
   case EDIT_EXPENSE:
     return {
@@ -66,7 +70,7 @@ const wallet = (state = INITIAL_STATE, { type, payload }) => {
   case SAVE_EDITED_EXPENSE:
     return {
       ...state,
-      expenses: [...filterExpenses(state, state.idToEdit), payload],
+      expenses: reorganizeExpenses(state, { ...payload, id: state.idToEdit }),
       total: findTotalAfterEdit(state, payload),
       editor: false,
     };
