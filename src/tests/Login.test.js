@@ -10,7 +10,7 @@ describe('Testes do componente <Login.jsx />', () => {
   const VALID_FORMAT_EMAIL = 'test@example.com';
   const VALID_FORMAT_PASSWORD = 'superSecurePassword';
 
-  it('Testa se a página de Login é carregada assim que a aplicação é renderizada na rota "/"', () => {
+  it('testa se a página de Login é carregada assim que a aplicação é renderizada na rota "/"', () => {
     const { history } = renderWithRouterAndRedux(<App />);
     expect(history.location.pathname).toBe('/');
 
