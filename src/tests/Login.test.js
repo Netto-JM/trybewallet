@@ -9,6 +9,20 @@ import {
 } from './constants';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 
+const loginIntoWallet = () => {
+  const { history, store } = renderWithRouterAndRedux(<App />);
+
+  const emailInput = screen.getByTestId(EMAIL_INPUT_TEST_ID);
+  const passwordInput = screen.getByTestId(PASSWORD_INPUT_TEST_ID);
+  const submitButton = screen.getByRole('button', { name: /entrar/i });
+
+  userEvent.type(emailInput, VALID_FORMAT_EMAIL);
+  userEvent.type(passwordInput, VALID_FORMAT_PASSWORD);
+  userEvent.click(submitButton);
+
+  return { history, store };
+};
+
 describe('Testes do componente <Login.jsx />', () => {
   it('testa se a página de Login é carregada assim que a aplicação é renderizada na rota "/"', () => {
     const { history } = renderWithRouterAndRedux(<App />);
@@ -62,19 +76,11 @@ describe('Testes do componente <Login.jsx />', () => {
   });
 
   it('testa se a rota muda para "/carteira" e o email é salvo no estado global ao clicar em entrar com dados válidos', () => {
-    const { history, store } = renderWithRouterAndRedux(<App />);
-
-    const emailInput = screen.getByTestId(EMAIL_INPUT_TEST_ID);
-    const passwordInput = screen.getByTestId(PASSWORD_INPUT_TEST_ID);
-    const submitButton = screen.getByRole('button', { name: /entrar/i });
-
-    userEvent.type(emailInput, VALID_FORMAT_EMAIL);
-    userEvent.type(passwordInput, VALID_FORMAT_PASSWORD);
-
-    expect(submitButton).not.toBeDisabled();
-    userEvent.click(submitButton);
+    const { history, store } = loginIntoWallet();
 
     expect(history.location.pathname).toBe('/carteira');
     expect(store.getState().user.email).toBe(VALID_FORMAT_EMAIL);
   });
 });
+
+export default loginIntoWallet;
