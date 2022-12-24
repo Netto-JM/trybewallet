@@ -1,15 +1,10 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
+import { EMAIL_TEST_ID, PASSWORD_TEST_ID, VALID_FORMAT_EMAIL, VALID_FORMAT_PASSWORD } from './constants';
 import { renderWithRouterAndRedux } from './helpers/renderWith';
 
 describe('Testes do componente <Login.jsx />', () => {
-  const EMAIL_TEST_ID = 'email-input';
-  const PASSWORD_TEST_ID = 'password-input';
-
-  const VALID_FORMAT_EMAIL = 'test@example.com';
-  const VALID_FORMAT_PASSWORD = 'superSecurePassword';
-
   it('testa se a página de Login é carregada assim que a aplicação é renderizada na rota "/"', () => {
     const { history } = renderWithRouterAndRedux(<App />);
     expect(history.location.pathname).toBe('/');
