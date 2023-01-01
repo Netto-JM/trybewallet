@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { fetchCurrencies, saveExpense } from '../redux/actions';
+import Loading from './Loading';
+import FetchingError from './FetchingError';
 
 function WalletForm(props) {
   const [expenseValue, setExpenseValue] = useState('');
@@ -11,7 +13,15 @@ function WalletForm(props) {
   const [tag, setTag] = useState('Alimentação');
   const [exchangeRates, setExchangeRates] = useState([]);
 
-  const { dispatch, currencies, editor, expenses, idToEdit } = props;
+  const {
+    dispatch,
+    currencies,
+    editor,
+    expenses,
+    idToEdit,
+    isFetching,
+    errorMessage,
+  } = props;
 
   useEffect(() => {
     dispatch(fetchCurrencies());
@@ -50,7 +60,7 @@ function WalletForm(props) {
     setExchangeRates([]);
   };
 
-  return (
+  const walletForm = (
     <form>
       <label htmlFor="value-input">
         Valor da despesa:
@@ -125,6 +135,14 @@ function WalletForm(props) {
       </button>
     </form>
   );
+
+  return (
+    <div>
+      {isFetching && <Loading />}
+      {errorMessage && <FetchingError error={ errorMessage } />}
+      {isFetching || errorMessage || walletForm}
+    </div>
+  );
 }
 
 const mapStateToProps = (state) => ({
@@ -140,6 +158,8 @@ WalletForm.propTypes = {
   dispatch: PropTypes.func.isRequired,
   editor: PropTypes.bool.isRequired,
   idToEdit: PropTypes.number.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  errorMessage: PropTypes.string.isRequired,
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   expenses: PropTypes.arrayOf(
     PropTypes.shape({
