@@ -6,6 +6,7 @@ export const SAVE_EXPENSE = 'SAVE_EXPENSE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 export const EDIT_EXPENSE = 'EDIT_EXPENSE';
 export const SAVE_EDITED_EXPENSE = 'SAVE_EDITED_EXPENSE';
+export const ENDPOINT = 'https://economia.awesomeapi.com.br/json/all';
 
 export const saveUser = (userEmail) => ({
   type: SAVE_USER,
@@ -32,7 +33,6 @@ const saveExpenseAndRates = (expenseAndRates, editor) => ({
 });
 
 const fetchExchangeRates = async () => {
-  const ENDPOINT = 'https://economia.awesomeapi.com.br/json/all';
   const response = await fetch(ENDPOINT);
   const data = await response.json();
   return data;
