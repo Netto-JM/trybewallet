@@ -88,6 +88,7 @@ describe('Testes do componente <Login.jsx />', () => {
     expect(history.location.pathname).toBe('/carteira');
     expect(store.getState().user.email).toBe(VALID_FORMAT_EMAIL);
 
+    expect(globalFetchSpy).toHaveBeenCalledTimes(1);
     expect(globalFetchSpy).toHaveBeenCalledWith(ENDPOINT);
   });
 });
