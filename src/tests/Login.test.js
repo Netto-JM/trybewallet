@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
+import { ENDPOINT } from '../redux/actions';
+import mockFetch from '../__mocks__/mockFetch';
 import {
   EMAIL_INPUT_TEST_ID,
   PASSWORD_INPUT_TEST_ID,
@@ -17,7 +19,11 @@ const loginIntoWallet = () => {
   const submitButton = screen.getByRole('button', { name: /entrar/i });
 
   userEvent.type(emailInput, VALID_FORMAT_EMAIL);
+  expect(emailInput.value).toBe(VALID_FORMAT_EMAIL);
+
   userEvent.type(passwordInput, VALID_FORMAT_PASSWORD);
+  expect(passwordInput.value).toBe(VALID_FORMAT_PASSWORD);
+
   userEvent.click(submitButton);
 
   return { history, store };
@@ -76,10 +82,13 @@ describe('Testes do componente <Login.jsx />', () => {
   });
 
   it('testa se a rota muda para "/carteira" e o email é salvo no estado global ao clicar em entrar com dados válidos', () => {
+    const globalFetchSpy = jest.spyOn(global, 'fetch').mockImplementation(mockFetch);
     const { history, store } = loginIntoWallet();
 
     expect(history.location.pathname).toBe('/carteira');
     expect(store.getState().user.email).toBe(VALID_FORMAT_EMAIL);
+
+    expect(globalFetchSpy).toHaveBeenCalledWith(ENDPOINT);
   });
 });
 
