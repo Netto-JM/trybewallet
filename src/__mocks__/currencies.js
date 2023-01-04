@@ -1,0 +1,43 @@
+const currencies = {
+  USD: {
+    code: 'USD',
+    codein: 'BRL',
+    name: 'Dólar Americano/Real Brasileiro',
+    high: '5.4624',
+    low: '5.3406',
+    varBid: '0.0926',
+    pctChange: '1.73',
+    bid: '5.4553',
+    ask: '5.4564',
+    timestamp: '1672775187',
+    create_date: '2023-01-03 16:46:27',
+  },
+  CAD: {
+    code: 'CAD',
+    codein: 'BRL',
+    name: 'Dólar Canadense/Real Brasileiro',
+    high: '3.9953',
+    low: '3.9151',
+    varBid: '0.0427',
+    pctChange: '1.08',
+    bid: '3.9923',
+    ask: '3.9943',
+    timestamp: '1672775182',
+    create_date: '2023-01-03 16:46:22',
+  },
+  BTC: {
+    code: 'BTC',
+    codein: 'BRL',
+    name: 'Bitcoin/Real Brasileiro',
+    high: '89.95',
+    low: '88.322',
+    varBid: '798',
+    pctChange: '0.89',
+    bid: '89.898',
+    ask: '89.95',
+    timestamp: '1672775181',
+    create_date: '2023-01-03 16:46:21',
+  },
+};
+
+export default currencies;
