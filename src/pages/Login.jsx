@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { saveUser } from '../redux/actions';
+import '../styles/tailwind.css';
 
 function Login(props) {
   const [email, setEmail] = useState('');
@@ -31,6 +32,7 @@ function Login(props) {
     <div>
       <form>
         <input
+          className="px-2 py-10"
           type="email"
           placeholder="Email"
           data-testid="email-input"
@@ -45,6 +47,7 @@ function Login(props) {
           onChange={ ({ target: { value } }) => { setPassword(value); } }
         />
         <button
+          className="px-2 py-10 bg-black"
           type="submit"
           disabled={ isDisable }
           onClick={ submitHandle }
